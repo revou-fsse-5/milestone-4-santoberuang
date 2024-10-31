@@ -4,6 +4,7 @@ from models.user_model import User
 from connectors.db import Session
 import datetime
 from flask_jwt_extended import create_access_token, current_user, unset_jwt_cookies
+from services.user_service import role_required
 
 userBp =Blueprint('user', __name__) 
 
@@ -72,7 +73,7 @@ def logout():
         print(e)
     return 'Error logging out. Please try again later.', 500
 
-@userBp.route('/user/me', methods=['GET'])
+@userBp.route('/user/<int:id>', methods=['GET'])
 @login_required
 def user_me():
     try:
@@ -81,16 +82,28 @@ def user_me():
     except Exception as e:
         print(e)
         return 'Error fetching user. Please try again later.', 500
-    
-@userBp.route('/user/<int:user_id>', methods=['GET'])
+
+@userBp.route('/user', methods=['GET'])
 @login_required
-def get_user(id):
+@role_required('admin')
+def get_users():
     try:
-        user = User.query.get(id)
-        return jsonify({'id': user.id, 'username': user.username, 'email': user.email}), 200
+        users = User.query.all()
+        return jsonify([{'id': user.id, 'username': user.username, 'email': user.email} for user in users]), 200
     except Exception as e:
         print(e)
-        return 'Error fetching user. Please try again later.', 500
+        return 'Error fetching users. Please try again later.', 500
+
+# @userBp.route('/user/<int:user_id>', methods=['GET'])
+# @login_required
+# @role_required('admin')
+# def get_user(id):
+#     try:
+#         user = User.query.get(id)
+#         return jsonify({'id': user.id, 'username': user.username, 'email': user.email}), 200
+#     except Exception as e:
+#         print(e)
+#         return 'Error fetching user. Please try again later.', 500
 
 @userBp.route('/user/update', methods=['PUT'])
 @login_required
