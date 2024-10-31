@@ -10,4 +10,4 @@ engine = create_engine(f'mysql+pymsql://milestone4santo_togetheras:aea57cc0af2e8
 connection = engine.connect()
 print('connected to database')
 
-Sessionmaker = sessionmaker(connection)
+Session = sessionmaker(connection)
