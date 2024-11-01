@@ -10,6 +10,7 @@ from models.transaction_model import Transaction
 from connectors.db import Session
 import os
 from controllers.user_controller import userBp
+from controllers.account_controller import accountBp
 
 # Base.metadata.create_all(connection)
 
@@ -32,6 +33,7 @@ login_manager.init_app(app)
 jwt = JWTManager(app)
 
 app.register_blueprint(userBp)
+app.register_blueprint(accountBp)
 
 
 @login_manager.request_loader
