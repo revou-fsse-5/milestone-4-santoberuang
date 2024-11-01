@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from flask_jwt_extended import JWTManager, get_jwt_identity, verify_jwt_in_request
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -6,11 +6,10 @@ from extensions import db
 from models.user_model import User
 from models.account_model import Account
 from models.transaction_model import Transaction
-# from connectors.db import Base
-from connectors.db import Session
 import os
 from controllers.user_controller import userBp
 from controllers.account_controller import accountBp
+from controllers.transaction_controller import transactionBp
 
 # Base.metadata.create_all(connection)
 
@@ -34,6 +33,7 @@ jwt = JWTManager(app)
 
 app.register_blueprint(userBp)
 app.register_blueprint(accountBp)
+app.register_blueprint(transactionBp)
 
 
 @login_manager.request_loader
@@ -41,8 +41,7 @@ def load_user(request):
     try:
             verify_jwt_in_request(request)
             user = get_jwt_identity()
-            with Session() as session:
-                return session.query(User).get(user.id)
+            return session.query(User).get(user.id)
     except Exception as e:
         print(e)
         return None

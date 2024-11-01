@@ -1,7 +1,7 @@
+from bcrypt import gensalt, hashpw
 from flask import Blueprint, jsonify, redirect, request, session, url_for
 from flask_login import login_required, login_user, logout_user
 from models.user_model import User
-from connectors.db import Session
 import datetime
 from flask_jwt_extended import create_access_token, current_user, get_jwt_identity, jwt_required, unset_jwt_cookies
 from services.user_service import role_required
@@ -15,14 +15,15 @@ def register():
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
+    # password_hash = hashpw(password.encode('utf-8'), gensalt.decode('utf-8'))
 
     if not username or not email or not password:
         return jsonify({'message': 'Please fill all fields'}), 400
     
     try:
-        with Session() as session:
-            user = User(username=username, email=email)
-            user.set_password(password)
+        
+            user = User(username=username, email=email, password=password)
+            # user.set_password(password)            
 
             db.session.add(user)
             db.session.commit()
@@ -46,7 +47,7 @@ def login():
         return jsonify({'Please fill all fields'}), 400
 
     try:
-        with Session() as session:
+        # with Session() as session:
             user = session.query(User).filter(User.email == email).first()
             isCorrectUser = user and user.check_password(password)
             

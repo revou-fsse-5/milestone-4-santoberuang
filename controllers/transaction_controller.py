@@ -6,7 +6,7 @@ from models.transaction_model import Transaction
 from models.account_model import Account
 from services.user_service import role_required
 from extensions import db
-from connectors.db import Session
+# from connectors.db import Session
 
 
 transactionBp = Blueprint('transactions', __name__)
@@ -48,7 +48,7 @@ def create_transaction():
     
 
     try:
-        with Session() as session:
+        # with Session() as session:
             transaction = Transaction(from_account_id=from_account.id, to_account_id=to_account.id, amount=amount, type=data['type'], description=description)
             
             from_account.balance -= amount

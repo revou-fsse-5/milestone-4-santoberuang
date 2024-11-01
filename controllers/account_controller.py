@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, session
 from flask_jwt_extended import current_user, get_jwt_identity, jwt_required
 from flask_login import login_required
 from models.account_model import Account
-from connectors.db import Session
+# from connectors.db import Session
 from services.user_service import role_required
 from extensions import db
 
@@ -54,7 +54,7 @@ def crerate_account():
     account_number = data.get('account_number')
 
     try:
-        with Session() as session:
+        # with Session() as session:
             account = Account(balance=balance, account_type=account_type, account_number=account_number)
             db.session.add(account)
             db.session.commit()
@@ -93,7 +93,7 @@ def delete_account():
     data = request.get_json()
 
     try:
-        with Session() as session:
+        # with Session() as session:
             account = Account.query.get(current_user.id)
             db.session.delete(account)
             db.session.commit()
